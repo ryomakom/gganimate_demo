@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="朝日新聞デジタル企画報道部　小宮山亮磨 @ryomakom" />
+
+<meta name="date" content="2023-05-11" />
+
+<title>動くグラフで大谷翔平選手のデータを見てみよう</title>
+
+<script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="site_style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">動くグラフで大谷翔平選手のデータを見てみよう</h1>
+<h4 class="author">朝日新聞デジタル企画報道部　小宮山亮磨 <span
+class="citation">@ryomakom</span></h4>
+<h4 class="date">2023-05-11</h4>
+
+</div>
+
+
+<div id="はじめに" class="section level2">
+<h2>はじめに</h2>
+<p>この資料は、私が今年3月に米国で開かれたデータジャーナリストの会議<a
+href="https://www.ire.org/training/conferences/nicar-2023/">NICAR</a>に参加し、勉強してきたRの<a
+href="https://gganimate.com/">gganimate</a>というパッケージについて説明するためのものです。日本記者クラブが開いている「<a
+href="https://forms.gle/ghECJSzibsSXNyWK8">土曜記者ゼミIT講座</a>」で5月13日に報告します。大リーグが提供している大谷翔平選手のデータを題材に、動くグラフを試作しています。</p>
+</div>
+<div id="必要なパッケージを読み込む" class="section level2">
+<h2>必要なパッケージを読み込む</h2>
+<p>基本的な道具がつまったtidyverse、大リーグデータを取得するのに使うbaseballrに加え、今回のテーマであるgganimateを呼び出す（ただしbaseballrは今回のテーマではないので、なくてもできるようにしてある）。</p>
+<pre class="r"><code>library(tidyverse)
+library(baseballr)
+library(gganimate)</code></pre>
+</div>
+<div id="データを読み込む" class="section level2">
+<h2>データを読み込む</h2>
+<p>下記のコードでは、「data」というフォルダ内にある「ohtani_p.csv」と「ohtani_b.csv」という二つのファイルを読み込んでいる。前者は大谷選手の投球データ、後者は大谷選手が打席に入ったときの相手投手の投球データ。いずれも2018年に大リーグ・エンゼルスへ移籍してから、今年5月初めまでのデータを含んでいる。</p>
+<p>データが含んでいるさまざまな数字がそれぞれ何を示しているのかは、<a
+href="https://baseballsavant.mlb.com/csv-docs">こちら</a>に書いてある。</p>
+<pre class="r"><code>ohtani_p &lt;- read_csv(&quot;data/ohtani_p.csv&quot;)
+ohtani_b &lt;- read_csv(&quot;data/ohtani_b.csv&quot;)
+
+# baseballrのパッケージがあれば、以下のコードでデータを取得できる。「660271」というのは大谷翔平に割り振られた選手コード。
+
+#ohtani_p &lt;- bind_rows(scrape_statcast_savant_pitcher(&quot;2018-04-01&quot;,
+#                                                     &quot;2018-11-30&quot;,
+#                                                     pitcherid = 660271),
+#                      scrape_statcast_savant_pitcher(&quot;2020-04-01&quot;,
+#                                                     &quot;2020-11-30&quot;,
+#                                                     pitcherid = 660271),
+#                      scrape_statcast_savant_pitcher(&quot;2021-04-01&quot;,
+#                                                     &quot;2021-11-30&quot;,
+#                                                     pitcherid = 660271),
+#                      scrape_statcast_savant_pitcher(&quot;2022-04-01&quot;,
+#                                                     &quot;2022-11-30&quot;,
+#                                                     pitcherid = 660271),
+#                      scrape_statcast_savant_pitcher(&quot;2023-04-01&quot;,
+#                                                     &quot;2023-11-30&quot;,
+#                                                     pitcherid = 660271))
+
+#ohtani_b &lt;- bind_rows(scrape_statcast_savant_batter(&quot;2018-04-01&quot;,
+#                                                    &quot;2018-11-30&quot;,
+#                                                    batterid = 660271),
+#                      scrape_statcast_savant_batter(&quot;2019-04-01&quot;,
+#                                                    &quot;2019-11-30&quot;,
+#                                                    batterid = 660271),
+#                      scrape_statcast_savant_batter(&quot;2020-04-01&quot;,
+#                                                    &quot;2020-11-30&quot;,
+#                                                    batterid = 660271),
+#                      scrape_statcast_savant_batter(&quot;2021-04-01&quot;,
+#                                                    &quot;2021-11-30&quot;,
+#                                                    batterid = 660271),
+#                      scrape_statcast_savant_batter(&quot;2022-04-01&quot;,
+#                                                    &quot;2022-11-30&quot;,
+#                                                    batterid = 660271),
+#                      scrape_statcast_savant_batter(&quot;2023-04-01&quot;,
+#                                                    &quot;2023-11-30&quot;,
+#                                                    batterid = 660271))
+
+
+glimpse(ohtani_p)</code></pre>
+<pre><code>## Rows: 6,115
+## Columns: 92
+## $ pitch_type                      &lt;chr&gt; &quot;ST&quot;, &quot;FF&quot;, &quot;FF&quot;, &quot;FF&quot;, &quot;ST&quot;, &quot;FS&quot;, &quot;S…
+## $ game_date                       &lt;date&gt; 2018-09-02, 2018-09-02, 2018-09-02, 2…
+## $ release_speed                   &lt;dbl&gt; 80.0, 92.7, 92.5, 91.6, 77.0, 83.4, 77…
+## $ release_pos_x                   &lt;dbl&gt; -2.14, -2.08, -2.03, -2.02, -2.28, -2.…
+## $ release_pos_z                   &lt;dbl&gt; 5.96, 6.06, 6.10, 6.13, 5.87, 6.11, 5.…
+## $ player_name                     &lt;chr&gt; &quot;Ohtani, Shohei&quot;, &quot;Ohtani, Shohei&quot;, &quot;O…
+## $ batter                          &lt;dbl&gt; 514888, 514888, 514888, 514888, 543807…
+## $ pitcher                         &lt;dbl&gt; 660271, 660271, 660271, 660271, 660271…
+## $ events                          &lt;chr&gt; &quot;field_out&quot;, NA, NA, NA, &quot;home_run&quot;, N…
+## $ description                     &lt;chr&gt; &quot;hit_into_play&quot;, &quot;foul&quot;, &quot;called_strik…
+## $ spin_dir                        &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ spin_rate_deprecated            &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ break_angle_deprecated          &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ break_length_deprecated         &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ zone                            &lt;dbl&gt; 14, 2, 6, 11, 8, 5, 6, 11, 6, 11, 13, …
+## $ des                             &lt;chr&gt; &quot;Jose Altuve grounds out, second basem…
+## $ game_type                       &lt;chr&gt; &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;…
+## $ stand                           &lt;chr&gt; &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;…
+## $ p_throws                        &lt;chr&gt; &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;…
+## $ home_team                       &lt;chr&gt; &quot;HOU&quot;, &quot;HOU&quot;, &quot;HOU&quot;, &quot;HOU&quot;, &quot;HOU&quot;, &quot;HO…
+## $ away_team                       &lt;chr&gt; &quot;LAA&quot;, &quot;LAA&quot;, &quot;LAA&quot;, &quot;LAA&quot;, &quot;LAA&quot;, &quot;LA…
+## $ type                            &lt;chr&gt; &quot;X&quot;, &quot;S&quot;, &quot;S&quot;, &quot;B&quot;, &quot;X&quot;, &quot;S&quot;, &quot;S&quot;, &quot;B&quot;…
+## $ hit_location                    &lt;dbl&gt; 4, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+## $ bb_type                         &lt;chr&gt; &quot;ground_ball&quot;, NA, NA, NA, &quot;fly_ball&quot;,…
+## $ balls                           &lt;dbl&gt; 1, 1, 1, 0, 1, 1, 1, 0, 0, 3, 2, 2, 2,…
+## $ strikes                         &lt;dbl&gt; 2, 1, 0, 0, 2, 2, 1, 1, 0, 2, 2, 2, 1,…
+## $ game_year                       &lt;dbl&gt; 2018, 2018, 2018, 2018, 2018, 2018, 20…
+## $ pfx_x                           &lt;dbl&gt; 1.18, -0.27, -0.17, -0.26, 1.43, -0.25…
+## $ pfx_z                           &lt;dbl&gt; 0.30, 1.31, 1.32, 1.32, 0.03, 0.33, 0.…
+## $ plate_x                         &lt;dbl&gt; 0.49, 0.06, 0.41, -0.01, -0.26, -0.26,…
+## $ plate_z                         &lt;dbl&gt; 1.04, 2.72, 2.11, 3.60, 1.91, 2.48, 2.…
+## $ on_3b                           &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ on_2b                           &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ on_1b                           &lt;dbl&gt; NA, NA, NA, NA, 643393, 643393, 643393…
+## $ outs_when_up                    &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ inning                          &lt;dbl&gt; 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,…
+## $ inning_topbot                   &lt;chr&gt; &quot;Bot&quot;, &quot;Bot&quot;, &quot;Bot&quot;, &quot;Bot&quot;, &quot;Bot&quot;, &quot;Bo…
+## $ hc_x                            &lt;dbl&gt; 139.01, NA, NA, NA, 17.22, NA, NA, NA,…
+## $ hc_y                            &lt;dbl&gt; 148.32, NA, NA, NA, 84.77, NA, NA, NA,…
+## $ tfs_deprecated                  &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ tfs_zulu_deprecated             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ fielder_2                       &lt;dbl&gt; 516472, 516472, 516472, 516472, 516472…
+## $ umpire                          &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ sv_id                           &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ vx0                             &lt;dbl&gt; 3.5891546, 6.0990889, 6.6534807, 5.663…
+## $ vy0                             &lt;dbl&gt; -116.51774, -134.90355, -134.52036, -1…
+## $ vz0                             &lt;dbl&gt; -4.72634645, -5.61353050, -7.26477729,…
+## $ ax                              &lt;dbl&gt; 10.057980, -4.656062, -3.654894, -4.37…
+## $ ay                              &lt;dbl&gt; 22.38357, 30.22180, 30.89515, 30.09881…
+## $ az                              &lt;dbl&gt; -28.72617, -15.08875, -14.63220, -15.8…
+## $ sz_top                          &lt;dbl&gt; 2.92, 2.87, 2.85, 2.90, 3.56, 3.54, 3.…
+## $ sz_bot                          &lt;dbl&gt; 1.38, 1.38, 1.36, 1.41, 1.72, 1.70, 1.…
+## $ hit_distance_sc                 &lt;dbl&gt; 94, 156, NA, NA, 370, 130, 140, NA, NA…
+## $ launch_speed                    &lt;dbl&gt; 58.3, 78.5, NA, NA, 98.1, 69.2, 61.4, …
+## $ launch_angle                    &lt;dbl&gt; 12, 73, NA, NA, 27, 73, 61, NA, NA, NA…
+## $ effective_speed                 &lt;dbl&gt; 80.3, 93.0, 92.9, 91.9, 77.9, 82.6, 77…
+## $ release_spin_rate               &lt;dbl&gt; 2286, 2046, 2106, 2125, 2231, 1347, 22…
+## $ release_extension               &lt;dbl&gt; 6.5, 6.6, 6.7, 6.6, 6.9, 6.2, 6.7, 6.3…
+## $ game_pk                         &lt;dbl&gt; 531454, 531454, 531454, 531454, 531454…
+## $ pitcher_1                       &lt;dbl&gt; 660271, 660271, 660271, 660271, 660271…
+## $ fielder_2_1                     &lt;dbl&gt; 516472, 516472, 516472, 516472, 516472…
+## $ fielder_3                       &lt;dbl&gt; 527043, 527043, 527043, 527043, 527043…
+## $ fielder_4                       &lt;dbl&gt; 664058, 664058, 664058, 664058, 664058…
+## $ fielder_5                       &lt;dbl&gt; 621493, 621493, 621493, 621493, 621493…
+## $ fielder_6                       &lt;dbl&gt; 592743, 592743, 592743, 592743, 592743…
+## $ fielder_7                       &lt;dbl&gt; 458913, 458913, 458913, 458913, 458913…
+## $ fielder_8                       &lt;dbl&gt; 545361, 545361, 545361, 545361, 545361…
+## $ fielder_9                       &lt;dbl&gt; 594777, 594777, 594777, 594777, 594777…
+## $ release_pos_y                   &lt;dbl&gt; 53.98, 53.95, 53.84, 53.94, 53.58, 54.…
+## $ estimated_ba_using_speedangle   &lt;dbl&gt; 0.147, NA, NA, NA, 0.433, NA, NA, NA, …
+## $ estimated_woba_using_speedangle &lt;dbl&gt; 0.132, NA, NA, NA, 0.714, NA, NA, NA, …
+## $ woba_value                      &lt;dbl&gt; 0.0, NA, NA, NA, 2.0, NA, NA, NA, NA, …
+## $ woba_denom                      &lt;dbl&gt; 1, NA, NA, NA, 1, NA, NA, NA, NA, 1, N…
+## $ babip_value                     &lt;dbl&gt; 0, NA, NA, NA, 0, NA, NA, NA, NA, 0, N…
+## $ iso_value                       &lt;dbl&gt; 0, NA, NA, NA, 3, NA, NA, NA, NA, 0, N…
+## $ launch_speed_angle              &lt;dbl&gt; 1, NA, NA, NA, 6, NA, NA, NA, NA, NA, …
+## $ at_bat_number                   &lt;dbl&gt; 24, 24, 24, 24, 23, 23, 23, 23, 23, 22…
+## $ pitch_number                    &lt;dbl&gt; 4, 3, 2, 1, 5, 4, 3, 2, 1, 7, 6, 5, 4,…
+## $ pitch_name                      &lt;chr&gt; &quot;Sweeper&quot;, &quot;4-Seam Fastball&quot;, &quot;4-Seam …
+## $ home_score                      &lt;dbl&gt; 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ away_score                      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ bat_score                       &lt;dbl&gt; 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ fld_score                       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ post_away_score                 &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ post_home_score                 &lt;dbl&gt; 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ post_bat_score                  &lt;dbl&gt; 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ post_fld_score                  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ if_fielding_alignment           &lt;chr&gt; &quot;Standard&quot;, &quot;Standard&quot;, &quot;Standard&quot;, &quot;S…
+## $ of_fielding_alignment           &lt;chr&gt; &quot;Standard&quot;, &quot;Standard&quot;, &quot;Standard&quot;, &quot;S…
+## $ spin_axis                       &lt;dbl&gt; 104, 192, 188, 191, 91, 216, 94, 105, …
+## $ delta_home_win_exp              &lt;dbl&gt; -0.015, 0.000, 0.000, 0.000, 0.178, 0.…
+## $ delta_run_exp                   &lt;dbl&gt; -0.167, -0.056, -0.044, 0.036, 1.684, …</code></pre>
+<pre class="r"><code>glimpse(ohtani_b)</code></pre>
+<pre><code>## Rows: 9,650
+## Columns: 92
+## $ pitch_type                      &lt;chr&gt; &quot;SI&quot;, &quot;FF&quot;, &quot;SL&quot;, &quot;CU&quot;, &quot;SI&quot;, &quot;CU&quot;, &quot;C…
+## $ game_date                       &lt;date&gt; 2018-09-30, 2018-09-30, 2018-09-30, 2…
+## $ release_speed                   &lt;dbl&gt; 88.1, 89.3, 81.0, 81.0, 90.3, 78.6, 80…
+## $ release_pos_x                   &lt;dbl&gt; 1.21, 1.06, 1.17, 2.17, 1.61, 2.15, 2.…
+## $ release_pos_z                   &lt;dbl&gt; 6.50, 6.57, 6.26, 5.63, 6.58, 5.66, 5.…
+## $ player_name                     &lt;chr&gt; &quot;Ohtani, Shohei&quot;, &quot;Ohtani, Shohei&quot;, &quot;O…
+## $ batter                          &lt;dbl&gt; 660271, 660271, 660271, 660271, 660271…
+## $ pitcher                         &lt;dbl&gt; 474463, 474463, 474463, 488748, 474463…
+## $ events                          &lt;chr&gt; &quot;force_out&quot;, NA, NA, &quot;strikeout&quot;, &quot;fie…
+## $ description                     &lt;chr&gt; &quot;hit_into_play&quot;, &quot;ball&quot;, &quot;ball&quot;, &quot;swin…
+## $ spin_dir                        &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ spin_rate_deprecated            &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ break_angle_deprecated          &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ break_length_deprecated         &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ zone                            &lt;dbl&gt; 6, 11, 13, 13, 6, 13, 13, 1, 1, 13, 13…
+## $ des                             &lt;chr&gt; &quot;Shohei Ohtani lines into a force out,…
+## $ game_type                       &lt;chr&gt; &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;…
+## $ stand                           &lt;chr&gt; &quot;L&quot;, &quot;L&quot;, &quot;L&quot;, &quot;L&quot;, &quot;L&quot;, &quot;L&quot;, &quot;L&quot;, &quot;L&quot;…
+## $ p_throws                        &lt;chr&gt; &quot;L&quot;, &quot;L&quot;, &quot;L&quot;, &quot;L&quot;, &quot;L&quot;, &quot;L&quot;, &quot;L&quot;, &quot;L&quot;…
+## $ home_team                       &lt;chr&gt; &quot;LAA&quot;, &quot;LAA&quot;, &quot;LAA&quot;, &quot;LAA&quot;, &quot;LAA&quot;, &quot;LA…
+## $ away_team                       &lt;chr&gt; &quot;OAK&quot;, &quot;OAK&quot;, &quot;OAK&quot;, &quot;OAK&quot;, &quot;OAK&quot;, &quot;OA…
+## $ type                            &lt;chr&gt; &quot;X&quot;, &quot;B&quot;, &quot;B&quot;, &quot;S&quot;, &quot;X&quot;, &quot;S&quot;, &quot;B&quot;, &quot;S&quot;…
+## $ hit_location                    &lt;dbl&gt; 1, NA, NA, 2, 7, NA, NA, NA, 8, NA, NA…
+## $ bb_type                         &lt;chr&gt; &quot;line_drive&quot;, NA, NA, NA, &quot;fly_ball&quot;, …
+## $ balls                           &lt;dbl&gt; 2, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0,…
+## $ strikes                         &lt;dbl&gt; 0, 0, 0, 2, 0, 1, 1, 0, 2, 1, 1, 0, 2,…
+## $ game_year                       &lt;dbl&gt; 2018, 2018, 2018, 2018, 2018, 2018, 20…
+## $ pfx_x                           &lt;dbl&gt; 1.23, 0.66, -0.28, -1.36, 1.31, -1.45,…
+## $ pfx_z                           &lt;dbl&gt; 0.64, 1.31, -0.76, -0.27, 0.86, 0.06, …
+## $ plate_x                         &lt;dbl&gt; 0.67, -1.06, -1.41, -0.73, 0.56, -1.18…
+## $ plate_z                         &lt;dbl&gt; 2.40, 2.75, 1.47, 0.90, 2.51, 1.99, -0…
+## $ on_3b                           &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ on_2b                           &lt;dbl&gt; NA, NA, NA, NA, 518466, NA, NA, NA, NA…
+## $ on_1b                           &lt;dbl&gt; 641684, 641684, 641684, NA, NA, NA, NA…
+## $ outs_when_up                    &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 2,…
+## $ inning                          &lt;dbl&gt; 3, 3, 3, 6, 1, 6, 6, 6, 9, 9, 9, 9, 4,…
+## $ inning_topbot                   &lt;chr&gt; &quot;Bot&quot;, &quot;Bot&quot;, &quot;Bot&quot;, &quot;Bot&quot;, &quot;Bot&quot;, &quot;Bo…
+## $ hc_x                            &lt;dbl&gt; 130.76, NA, NA, NA, 47.69, NA, NA, NA,…
+## $ hc_y                            &lt;dbl&gt; 180.98, NA, NA, NA, 107.86, NA, NA, NA…
+## $ tfs_deprecated                  &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ tfs_zulu_deprecated             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ fielder_2                       &lt;dbl&gt; 572033, 572033, 572033, 607333, 572033…
+## $ umpire                          &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ sv_id                           &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ vx0                             &lt;dbl&gt; -3.8147929, -6.4323971, -5.1892224, -3…
+## $ vy0                             &lt;dbl&gt; -128.2633, -129.7975, -117.8327, -117.…
+## $ vz0                             &lt;dbl&gt; -5.2250003, -5.9905992, -2.6276832, -3…
+## $ ax                              &lt;dbl&gt; 14.190322, 8.493775, -1.572043, -11.66…
+## $ ay                              &lt;dbl&gt; 23.51088, 24.58120, 21.92197, 22.10192…
+## $ az                              &lt;dbl&gt; -24.35857, -16.79322, -38.84896, -34.2…
+## $ sz_top                          &lt;dbl&gt; 3.55, 3.25, 3.23, 3.55, 3.55, 3.55, 3.…
+## $ sz_bot                          &lt;dbl&gt; 1.63, 1.60, 1.59, 1.63, 1.63, 1.63, 1.…
+## $ hit_distance_sc                 &lt;dbl&gt; 91, NA, NA, NA, 284, NA, NA, NA, 224, …
+## $ launch_speed                    &lt;dbl&gt; 110.4, NA, NA, NA, 85.9, NA, NA, NA, 1…
+## $ launch_angle                    &lt;dbl&gt; 4, NA, NA, NA, 30, NA, NA, NA, 9, NA, …
+## $ effective_speed                 &lt;dbl&gt; 88.0, 88.1, 80.1, 80.3, 89.3, 78.1, 79…
+## $ release_spin_rate               &lt;dbl&gt; 1733, 1885, 2415, NA, 1766, 2076, 1995…
+## $ release_extension               &lt;dbl&gt; 5.9, 5.4, 5.6, 5.8, 5.7, 5.9, 6.0, 6.2…
+## $ game_pk                         &lt;dbl&gt; 531832, 531832, 531832, 531832, 531832…
+## $ pitcher_1                       &lt;dbl&gt; 474463, 474463, 474463, 488748, 474463…
+## $ fielder_2_1                     &lt;dbl&gt; 572033, 572033, 572033, 607333, 572033…
+## $ fielder_3                       &lt;dbl&gt; 621566, 621566, 621566, 621566, 621566…
+## $ fielder_4                       &lt;dbl&gt; 476704, 476704, 476704, 476704, 476704…
+## $ fielder_5                       &lt;dbl&gt; 640461, 640461, 640461, 640461, 656305…
+## $ fielder_6                       &lt;dbl&gt; 620439, 620439, 620439, 620439, 543760…
+## $ fielder_7                       &lt;dbl&gt; 605361, 605361, 605361, 605361, 605361…
+## $ fielder_8                       &lt;dbl&gt; 657656, 657656, 657656, 592192, 657656…
+## $ fielder_9                       &lt;dbl&gt; 459964, 459964, 459964, 459964, 572039…
+## $ release_pos_y                   &lt;dbl&gt; 54.56, 55.09, 54.88, 54.69, 54.85, 54.…
+## $ estimated_ba_using_speedangle   &lt;dbl&gt; 0.607, NA, NA, NA, 0.060, NA, NA, NA, …
+## $ estimated_woba_using_speedangle &lt;dbl&gt; 0.556, NA, NA, NA, 0.080, NA, NA, NA, …
+## $ woba_value                      &lt;dbl&gt; 0.0, NA, NA, 0.0, 0.0, NA, NA, NA, 0.9…
+## $ woba_denom                      &lt;dbl&gt; 1, NA, NA, 1, 1, NA, NA, NA, 1, NA, NA…
+## $ babip_value                     &lt;dbl&gt; 0, NA, NA, 0, 0, NA, NA, NA, 1, NA, NA…
+## $ iso_value                       &lt;dbl&gt; 0, NA, NA, 0, 0, NA, NA, NA, 0, NA, NA…
+## $ launch_speed_angle              &lt;dbl&gt; 4, NA, NA, NA, 3, NA, NA, NA, 4, NA, N…
+## $ at_bat_number                   &lt;dbl&gt; 25, 25, 25, 46, 7, 46, 46, 46, 64, 64,…
+## $ pitch_number                    &lt;dbl&gt; 3, 2, 1, 4, 1, 3, 2, 1, 4, 3, 2, 1, 3,…
+## $ pitch_name                      &lt;chr&gt; &quot;Sinker&quot;, &quot;4-Seam Fastball&quot;, &quot;Slider&quot;,…
+## $ home_score                      &lt;dbl&gt; 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 0,…
+## $ away_score                      &lt;dbl&gt; 2, 2, 2, 4, 0, 4, 4, 4, 4, 4, 4, 4, 3,…
+## $ bat_score                       &lt;dbl&gt; 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 0,…
+## $ fld_score                       &lt;dbl&gt; 2, 2, 2, 4, 0, 4, 4, 4, 4, 4, 4, 4, 3,…
+## $ post_away_score                 &lt;dbl&gt; 2, 2, 2, 4, 0, 4, 4, 4, 4, 4, 4, 4, 3,…
+## $ post_home_score                 &lt;dbl&gt; 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 0,…
+## $ post_bat_score                  &lt;dbl&gt; 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 0,…
+## $ post_fld_score                  &lt;dbl&gt; 2, 2, 2, 4, 0, 4, 4, 4, 4, 4, 4, 4, 3,…
+## $ if_fielding_alignment           &lt;chr&gt; &quot;Standard&quot;, &quot;Standard&quot;, &quot;Standard&quot;, &quot;S…
+## $ of_fielding_alignment           &lt;chr&gt; &quot;Standard&quot;, &quot;Standard&quot;, &quot;Standard&quot;, &quot;S…
+## $ spin_axis                       &lt;dbl&gt; 118, 153, 340, 281, 123, 268, 274, 152…
+## $ delta_home_win_exp              &lt;dbl&gt; -0.031, 0.000, 0.000, -0.023, -0.033, …
+## $ delta_run_exp                   &lt;dbl&gt; -0.422, 0.075, 0.038, -0.117, -0.340, …</code></pre>
+</div>
+<div id="まずはふつうのグラフ" class="section level2">
+<h2>まずはふつうのグラフ</h2>
+<p>投球データについて、球種ごとの平均球速と平均回転数を示すグラフを作る。まずはアニメーションなしのバージョンから。縦軸に１分当たりの回転数、横軸に球速（時速）をとり、球種ごとにわけて散布図にする。</p>
+<pre class="r"><code>ohtani_p_chart &lt;- ohtani_p %&gt;%
+  filter(!is.na(release_speed),
+         !is.na(release_spin_rate),
+         pitch_name!=&quot;&quot;) %&gt;%
+  mutate(release_speed=release_speed*1.60934) %&gt;%
+  group_by(game_year,pitch_name) %&gt;%
+  summarize(release_speed=mean(release_speed),
+            release_spin_rate=mean(release_spin_rate),
+            n=n()) %&gt;%
+  ggplot(aes(release_speed,
+             release_spin_rate,
+             size=n,
+             color=pitch_name)) +
+  geom_point() +
+  scale_x_continuous(limits=c(90,170)) +
+  geom_text(aes(label = pitch_name), 
+            hjust = 1.2,
+            vjust = 0.5,
+            size=4)+
+  theme(legend.position = &quot;none&quot;)
+
+ohtani_p_chart</code></pre>
+<p><img src="%E5%9C%9F%E6%9B%9C%E8%A8%98%E8%80%85%E3%82%BC%E3%83%9F%E7%94%A8_files/figure-html/pitch-1.png" width="672" /></p>
+</div>
+<div id="アニメーションにしてみる" class="section level2">
+<h2>アニメーションにしてみる</h2>
+<p>さっき作ったものを動くグラフにする。年を経るにつれて球種のバリエーションが増え、また直球（4-Seam
+Fastball）の球速と回転数が上がっていること、スプリット（Split-Finger）の回転数が下がっている（＝より落ちやすくなっている）ことなどが見てとれる。</p>
+<pre class="r"><code>ohtani_p_anim &lt;- ohtani_p_chart +
+  transition_time(as.integer(game_year)) + # 年ごとの変化をアニメーションに
+  ease_aes(&quot;cubic-in-out&quot;) + # 点の動き方にメリハリを付ける
+  labs(title = &#39;Year: {frame_time}&#39;)
+
+animate(ohtani_p_anim, nframes = 200, fps = 10, width = 800, height = 500)</code></pre>
+<p><img
+src="%E5%9C%9F%E6%9B%9C%E8%A8%98%E8%80%85%E3%82%BC%E3%83%9F%E7%94%A8_files/figure-html/pitch_anim-1.gif" /><!-- --></p>
+</div>
+<div id="次に打席データをふつうのグラフに" class="section level2">
+<h2>次に打席データをふつうのグラフに</h2>
+<p>大谷が打席に入ったときにどんな球種がどれだけ投じられ、そのうち大谷がどの球種を相対的に得意・苦手としていたかを棒グラフで表す。球数が多い順番に上から並べている。まずは動かないふつうのグラフで。</p>
+<pre class="r"><code>ohtani_b_chart &lt;- ohtani_b %&gt;%
+  mutate(on_base=ifelse(events %in%
+                          c(&quot;single&quot;,&quot;double&quot;,&quot;triple&quot;,&quot;home_run&quot;,&quot;walk&quot;),1,0),
+         out=ifelse((on_base!=1 &amp; events!=&quot;&quot;),1,0)) %&gt;%
+  group_by(game_year,
+           pitch_name,
+           on_base,
+           out) %&gt;%
+  summarize(n=n()) %&gt;%
+  ungroup() %&gt;%
+  mutate(result=ifelse(on_base==1,&quot;出塁&quot;,
+                ifelse(out==1,&quot;アウト&quot;,&quot;その他&quot;))) %&gt;%
+  filter(pitch_name!=&quot;&quot;,
+         result!=&quot;その他&quot;) %&gt;%
+  select(-on_base,-out) %&gt;%
+  pivot_wider(names_from = pitch_name,values_from = n) %&gt;% # ここからの数行で
+  mutate_all(~ifelse(is.na(.), 0, .)) %&gt;% # pivot_widerとpivot_longerを
+  pivot_longer(cols=c(-game_year,-result), # 繰り返しているのは、年によって
+               names_to = &quot;pitch_name&quot;, # 特定の球種があったりなかったりするのを
+               values_to = &quot;n&quot;) %&gt;% # 避けることで、あとでアニメーションにしたときに
+  ggplot(aes(reorder(pitch_name,n),n,fill=result)) + # 表示がおかしくなるのを防ぐため
+  geom_bar(stat=&quot;identity&quot;) +
+  coord_flip()
+
+ohtani_b_chart</code></pre>
+<p><img src="%E5%9C%9F%E6%9B%9C%E8%A8%98%E8%80%85%E3%82%BC%E3%83%9F%E7%94%A8_files/figure-html/bat-1.png" width="672" /></p>
+</div>
+<div id="同じものを動くグラフに" class="section level2">
+<h2>同じものを動くグラフに</h2>
+<p>アニメーションにすると、年によって球種の割合はけっこう違うこと、とくに最近では変化球が増えていることなどが読み取れる。</p>
+<pre class="r"><code>ohtani_b_anim &lt;- ohtani_b_chart +
+  transition_time(as.integer(game_year)) +
+  ease_aes(&quot;cubic-in-out&quot;) +
+  view_follow() +   # 横軸に示される範囲が年によって柔軟に変わるようにするため
+  labs(title = &#39;Year: {frame_time}&#39;)
+
+animate(ohtani_b_anim, nframes = 200, fps = 10, width = 800, height = 500)</code></pre>
+<p><img
+src="%E5%9C%9F%E6%9B%9C%E8%A8%98%E8%80%85%E3%82%BC%E3%83%9F%E7%94%A8_files/figure-html/bat_anim-1.gif" /><!-- --></p>
+<p>以上。</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
